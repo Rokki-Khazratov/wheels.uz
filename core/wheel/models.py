@@ -30,24 +30,33 @@ CLIMATE_CHOISES = [
 ]
 
 
+class Size(m.Model):
+    value = m.IntegerField(choices=SIZE_CHOICES)
+
+    def __str__(self):
+        return str(self.value)
+
+
 class Category(m.Model):
     name = m.CharField(max_length=255)
+    sizes = m.ManyToManyField(Size)
     image = m.ImageField(upload_to="categories/")
 
-    def __str__(self) -> str:
-        return self.name
+    def __str__(self):
+        return f"Car {self.name} - Sizes: {', '.join(str(size) for size in self.sizes.all())}"
 
 class Wheel(m.Model):
     name = m.CharField(max_length=255)
     price = m.IntegerField()
-    size = m.IntegerField(choices=SIZE_CHOICES)
     climate = m.IntegerField(choices=CLIMATE_CHOISES)
-    category = m.ForeignKey(Category,on_delete=m.CASCADE)
+    size = m.ManyToManyField(Size)
+    # category = m.ManyToManyField(Category)
     images = m.ManyToManyField('WheelImages', related_name='wheel_images', blank=True)
 
 
     def __str__(self):
-        return f"For {self.category},Car-{self.name} "
+        #For {self.category},
+        return f"Car-{self.name} "
 
 class WheelImages(m.Model) :
     wheel = m.ForeignKey(Wheel,on_delete=m.CASCADE)

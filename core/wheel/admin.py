@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import *
 
+admin.site.register(Size)
 admin.site.register(Category)
 # admin.site.register(Wheel)
 # admin.site.register(WheelImages)
@@ -12,7 +13,8 @@ class WheelImageAdmin (admin.StackedInline):
 @admin.register(Wheel)
 class WheelAdmin(admin.ModelAdmin):
     inlines = [WheelImageAdmin]
-    list_display = ['name','id','size','price','climate']
+    #,'category.size'
+    list_display = ['name','id','price','climate']
 
     class Meta:
         model = Wheel
