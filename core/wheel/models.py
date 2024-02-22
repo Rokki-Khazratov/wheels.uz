@@ -29,16 +29,15 @@ class Category(m.Model):
     name = m.CharField(max_length=255)
     sizes = m.ManyToManyField(Size)
     image = m.ImageField(upload_to="categories/")
+    price = m.IntegerField()
 
     def __str__(self):
         return f"Car {self.name} - Sizes: {', '.join(str(size) for size in self.sizes.all())}"
 
 class Wheel(m.Model):
     name = m.CharField(max_length=255)
-    price = m.IntegerField()
     climate = m.IntegerField(choices=CLIMATE_CHOISES)
-    size = m.ManyToManyField(Size)
-    # category = m.ManyToManyField(Category)
+    category = m.ManyToManyField(Category)
     images = m.ManyToManyField('WheelImages', related_name='wheel_images', blank=True)
 
 

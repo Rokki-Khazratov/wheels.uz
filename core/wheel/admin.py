@@ -14,7 +14,7 @@ class WheelImageAdmin (admin.StackedInline):
 class WheelAdmin(admin.ModelAdmin):
     inlines = [WheelImageAdmin]
     #,'category.size'
-    list_display = ['name','id','price','climate']
+    list_display = ['name','id']
 
     class Meta:
         model = Wheel
