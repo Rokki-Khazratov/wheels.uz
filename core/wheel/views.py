@@ -12,6 +12,8 @@ class SizeRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Size.objects.all()
     serializer_class = SizeSerializer
 
+
+
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -19,6 +21,7 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
 class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
 
 class WheelListCreateAPIView(generics.ListCreateAPIView):
     queryset = Wheel.objects.all()
@@ -28,10 +31,4 @@ class WheelRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Wheel.objects.all()
     serializer_class = WheelSerializer
 
-class WheelImagesListCreateAPIView(generics.ListCreateAPIView):
-    queryset = WheelImages.objects.all()
-    serializer_class = WheelImagesSerializer
 
-class WheelImagesRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = WheelImages.objects.all()
-    serializer_class = WheelImagesSerializer

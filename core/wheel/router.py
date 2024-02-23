@@ -3,7 +3,6 @@ from .views import (
     SizeListCreateAPIView, SizeRetrieveUpdateDestroyAPIView,
     CategoryListCreateAPIView, CategoryRetrieveUpdateDestroyAPIView,
     WheelListCreateAPIView, WheelRetrieveUpdateDestroyAPIView,
-    WheelImagesListCreateAPIView, WheelImagesRetrieveUpdateDestroyAPIView
 )
 
 urlpatterns = [
@@ -16,6 +15,6 @@ urlpatterns = [
     path('wheels/', WheelListCreateAPIView.as_view(), name='wheel-list-create'),
     path('wheels/<int:pk>/', WheelRetrieveUpdateDestroyAPIView.as_view(), name='wheel-retrieve-update-destroy'),
 
-    path('wheel-images/', WheelImagesListCreateAPIView.as_view(), name='wheel-images-list-create'),
-    path('wheel-images/<int:pk>/', WheelImagesRetrieveUpdateDestroyAPIView.as_view(), name='wheel-images-retrieve-update-destroy'),
 ]
+
+

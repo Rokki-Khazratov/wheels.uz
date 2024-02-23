@@ -1,16 +1,17 @@
 from rest_framework import serializers
-from .models import Size, Category, Wheel, WheelImages
+from .models import Size, Category, UserProfile, Wheel, WheelImages
+from django.contrib.auth.models import User
+
 
 
 class SizeSerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source='category.name') 
     class Meta:
         model = Size
-        fields = '__all__'
+        fields = ['category','price','value']
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    sizes = SizeSerializer(many=True, read_only=True)
-
     class Meta:
         model = Category
         fields = '__all__'
@@ -20,16 +21,15 @@ class WheelImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = WheelImages
         fields = '__all__'
-
-
+        
 class WheelSerializer(serializers.ModelSerializer):
-    size = SizeSerializer(many=True)
-    images = WheelImagesSerializer(many=True, read_only=True)
+    climate = serializers.CharField(source='get_climate_display')
+    category = CategorySerializer(read_only=True)
+    details = SizeSerializer(many=True, read_only=True, source='details.all')
 
     class Meta:
         model = Wheel
-        fields = '__all__'
-
+        fields = ['id', 'name', 'climate', 'category', 'details']
 
     # def create(self, validated_data):
     #     sizes_data = validated_data.pop('size', [])
@@ -45,3 +45,46 @@ class WheelSerializer(serializers.ModelSerializer):
     #         WheelImages.objects.create(wheel=wheel, **image_data)
 
     #     return wheel
+
+
+
+
+class UserAbstract(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['name', 'phone_number']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    profile = UserAbstract(required=False)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password', 'profile']
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
+
+    def validate(self, data):
+        username = data.get('username')
+        password = data.get('password')
+
+        if User.objects.filter(username=username).exists():
+            raise ValidationError('Пользователь с таким именем уже существует.')
+
+        if len(password) < 8:
+            raise ValidationError('Пароль должен содержать более 8 символов.')
+        return data
+
+    def create(self, validated_data):
+        profile_data = validated_data.pop('profile', {})
+        user = User.objects.create_user(**validated_data)
+
+        profile, created = UserProfile.objects.get_or_create(user=user, defaults=profile_data)
+
+        if not created:
+            for key, value in profile_data.items():
+                setattr(profile, key, value)
+            profile.save()
+
+        return user
