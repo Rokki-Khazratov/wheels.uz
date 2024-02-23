@@ -1,16 +1,16 @@
 # views.py
 
 from rest_framework import generics
-from .models import Size, Category, Wheel, WheelImages
-from .serializers import SizeSerializer, CategorySerializer, WheelSerializer, WheelImagesSerializer
+from .models import Detail, Category, Wheel, WheelImages
+from .serializers import DetailSerializer, CategorySerializer, WheelSerializer, WheelImagesSerializer
 
-class SizeListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Size.objects.all()
-    serializer_class = SizeSerializer
+class DetailListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Detail.objects.all()
+    serializer_class = DetailSerializer
 
-class SizeRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Size.objects.all()
-    serializer_class = SizeSerializer
+class DetailRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Detail.objects.all()
+    serializer_class = DetailSerializer
 
 
 
@@ -24,11 +24,11 @@ class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
 
 class WheelListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Wheel.objects.all()
+    queryset = Wheel.objects.all().prefetch_related('details')
     serializer_class = WheelSerializer
 
 class WheelRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Wheel.objects.all()
+    queryset = Wheel.objects.all().prefetch_related('details')
     serializer_class = WheelSerializer
 
 

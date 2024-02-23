@@ -1,13 +1,13 @@
 from django.urls import path
 from .views import (
-    SizeListCreateAPIView, SizeRetrieveUpdateDestroyAPIView,
+    DetailListCreateAPIView, DetailRetrieveUpdateDestroyAPIView,
     CategoryListCreateAPIView, CategoryRetrieveUpdateDestroyAPIView,
     WheelListCreateAPIView, WheelRetrieveUpdateDestroyAPIView,
 )
 
 urlpatterns = [
-    path('sizes/', SizeListCreateAPIView.as_view(), name='size-list-create'),
-    path('sizes/<int:pk>/', SizeRetrieveUpdateDestroyAPIView.as_view(), name='size-retrieve-update-destroy'),
+    path('details/', DetailListCreateAPIView.as_view(), name='Detail-list-create'),
+    path('details/<int:pk>/', DetailRetrieveUpdateDestroyAPIView.as_view(), name='Detail-retrieve-update-destroy'),
 
     path('categories/', CategoryListCreateAPIView.as_view(), name='category-list-create'),
     path('categories/<int:pk>/', CategoryRetrieveUpdateDestroyAPIView.as_view(), name='category-retrieve-update-destroy'),

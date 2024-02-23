@@ -19,16 +19,29 @@ CLIMATE_CHOICES = [
     (2, 'Зимние'),
 ]
 
-class Size(m.Model):
+class Detail(m.Model):
     category = m.ForeignKey('Wheel', on_delete=m.CASCADE)
-    value = m.IntegerField(choices=SIZE_CHOICES)
+    size = m.IntegerField(choices=SIZE_CHOICES)
     price = m.IntegerField()
-    month_3_price = m.IntegerField(blank = True,null=True)
-    month_6_price = m.IntegerField(blank = True,null=True)
-    month_9_price = m.IntegerField(blank = True,null=True)
+
+    @property
+    def month_3_price(self):
+        if self.price:
+            return round(self.price / 3, 2) 
+        else:
+            return None 
+
+    @property
+    def month_6_price(self):
+        if self.price:
+            return round(self.price / 6, 2) 
+        else:
+            return None 
 
     def __str__(self):
         return f"{self.category.name} - Размер: {self.value}"
+
+    
 
 class Category(m.Model):
     name = m.CharField(max_length=255)

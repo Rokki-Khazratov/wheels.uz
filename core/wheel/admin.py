@@ -1,8 +1,9 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(Size)
+admin.site.register(Detail)
 admin.site.register(Category)
+admin.site.register(UserProfile)
 # admin.site.register(Wheel)
 # admin.site.register(WheelImages)
 

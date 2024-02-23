@@ -1,14 +1,14 @@
 from rest_framework import serializers
-from .models import Size, Category, UserProfile, Wheel, WheelImages
+from .models import Detail, Category, UserProfile, Wheel, WheelImages
 from django.contrib.auth.models import User
 
 
 
-class SizeSerializer(serializers.ModelSerializer):
+class DetailSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.name') 
     class Meta:
-        model = Size
-        fields = ['category','price','value']
+        model = Detail
+        fields = ['id','category','value','month_3_price','month_6_price']
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -25,7 +25,8 @@ class WheelImagesSerializer(serializers.ModelSerializer):
 class WheelSerializer(serializers.ModelSerializer):
     climate = serializers.CharField(source='get_climate_display')
     category = CategorySerializer(read_only=True)
-    details = SizeSerializer(many=True, read_only=True, source='details.all')
+    details = DetailSerializer(many=True, read_only=True)
+
 
     class Meta:
         model = Wheel
