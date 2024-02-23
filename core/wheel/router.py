@@ -6,6 +6,11 @@ from .views import (
 )
 
 urlpatterns = [
+
+    path('categories/', CategoryListCreateAPIView.as_view()),
+    path('categories/<int:pk>/', CategoryRetrieveUpdateDestroyAPIView.as_view()),
+
+
     path('details/', DetailListCreateAPIView.as_view(), name='Detail-list-create'),
     path('details/<int:pk>/', DetailRetrieveUpdateDestroyAPIView.as_view(), name='Detail-retrieve-update-destroy'),
 

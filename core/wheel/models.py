@@ -20,7 +20,8 @@ CLIMATE_CHOICES = [
 ]
 
 class Detail(m.Model):
-    category = m.ForeignKey('Wheel', on_delete=m.CASCADE)
+    wheel = m.ForeignKey('Wheel', on_delete=m.CASCADE) 
+    wheel_reference_id = m.IntegerField(null=True, blank=True)
     size = m.IntegerField(choices=SIZE_CHOICES)
     price = m.IntegerField()
 
@@ -39,7 +40,7 @@ class Detail(m.Model):
             return None 
 
     def __str__(self):
-        return f"{self.category.name} - Размер: {self.value}"
+        return f"{self.wheel.name} - Размер: {self.size}"
 
     
 
@@ -53,7 +54,8 @@ class Category(m.Model):
 class Wheel(m.Model):
     name = m.CharField(max_length=255)
     climate = m.IntegerField(choices=CLIMATE_CHOICES)
-    category = m.ForeignKey(Category, on_delete=m.CASCADE)
+    category = m.ForeignKey(Category, on_delete=m.CASCADE,related_name='wheels')
+    details = m.ManyToManyField('Detail', related_name='wheels')  # Optional
     images = m.ManyToManyField('WheelImages', related_name='wheel_images', blank=True)
 
     def __str__(self):

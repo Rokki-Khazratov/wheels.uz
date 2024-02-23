@@ -4,33 +4,76 @@ from django.contrib.auth.models import User
 
 
 
+
+
+
+
 class DetailSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source='category.name') 
+    wheel = serializers.CharField(source='wheel.name')
+
     class Meta:
         model = Detail
-        fields = ['id','category','value','month_3_price','month_6_price']
+        fields = ['id', 'wheel_id', 'size', 'month_3_price', 'month_6_price', 'wheel'] 
 
 
+
+
+
+# New serializer for details
+class WheelDetailsSerializer(serializers.Serializer):
+    def get_details(self, context):
+        wheel_id = context.get('wheel_id')
+        if wheel_id:
+            filtered_details = Wheel.objects.get(pk=wheel_id).details.all()
+        else:
+            filtered_details = []
+        return DetailSerializer(filtered_details, many=True).data
+
+
+
+# Revised CategorySerializer
 class CategorySerializer(serializers.ModelSerializer):
+    wheels = WheelDetailsSerializer(many=True, read_only=True)
     class Meta:
         model = Category
         fields = '__all__'
+    
+    # def get_wheels(self, obj):
+    #     return WheelDetailsSerializer(obj.wheels.filter(category_id=obj.pk), many=True).data
+    
+
+
+
 
 
 class WheelImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = WheelImages
         fields = '__all__'
+
         
 class WheelSerializer(serializers.ModelSerializer):
     climate = serializers.CharField(source='get_climate_display')
     category = CategorySerializer(read_only=True)
     details = DetailSerializer(many=True, read_only=True)
 
+    # def get_details(self, wheel):
+    #     filtered_details = wheel.details.filter(wheel_id=wheel.id)
+    #     return DetailSerializer(filtered_details, many=True).data
+        
+    def get_details(self, wheel):
+        wheel_id = self.context.get('wheel_id')
+        if wheel_id:
+            filtered_details = wheel.details.filter(wheel_id=wheel_id)
+        else:
+            filtered_details = wheel.details.all() 
+        return DetailSerializer(filtered_details, many=True).data
 
     class Meta:
         model = Wheel
         fields = ['id', 'name', 'climate', 'category', 'details']
+
+
 
     # def create(self, validated_data):
     #     sizes_data = validated_data.pop('size', [])
@@ -46,6 +89,14 @@ class WheelSerializer(serializers.ModelSerializer):
     #         WheelImages.objects.create(wheel=wheel, **image_data)
 
     #     return wheel
+
+
+
+
+
+
+
+
 
 
 
