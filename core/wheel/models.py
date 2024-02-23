@@ -17,12 +17,15 @@ SIZE_CHOICES = [
 CLIMATE_CHOICES = [
     (1, 'Летние'),
     (2, 'Зимние'),
+    (3, 'Универсальный'),
 ]
 
 class Detail(m.Model):
     wheel = m.ForeignKey('Wheel', on_delete=m.CASCADE) 
     wheel_reference_id = m.IntegerField(null=True, blank=True)
     size = m.IntegerField(choices=SIZE_CHOICES)
+    width = m.IntegerField(default=65)
+    lenght = m.IntegerField(default=170)
     price = m.IntegerField()
 
     @property
@@ -77,3 +80,12 @@ class UserProfile(m.Model):
 
     def __str__(self):
         return str(self.user) 
+
+
+
+class Order(m.Model):
+    full_name = m.CharField(max_length=100)
+    phone_number = m.IntegerField()
+    longitude = m.CharField(max_length=100)
+    latitude = m.CharField(max_length=100)
+    adress = m.CharField(max_length=100)

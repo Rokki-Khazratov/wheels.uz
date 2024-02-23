@@ -13,7 +13,7 @@ class DetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Detail
-        fields = ['id', 'wheel_id', 'size', 'month_3_price', 'month_6_price', 'wheel'] 
+        fields = ['id', 'wheel_id', 'size','width','lenght', 'month_3_price', 'month_6_price', 'wheel'] 
 
 
 
