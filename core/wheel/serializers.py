@@ -20,20 +20,20 @@ class DetailSerializer(serializers.ModelSerializer):
 
 
 # New serializer for details
-class WheelDetailsSerializer(serializers.Serializer):
-    def get_details(self, context):
-        wheel_id = context.get('wheel_id')
-        if wheel_id:
-            filtered_details = Wheel.objects.get(pk=wheel_id).details.all()
-        else:
-            filtered_details = []
-        return DetailSerializer(filtered_details, many=True).data
+# class WheelDetailsSerializer(serializers.Serializer):
+#     def get_details(self, context):
+#         wheel_id = context.get('wheel_id')
+#         if wheel_id:
+#             filtered_details = Wheel.objects.get(pk=wheel_id).details.all()
+#         else:
+#             filtered_details = []
+#         return DetailSerializer(filtered_details, many=True).data
 
 
 
 # Revised CategorySerializer
 class CategorySerializer(serializers.ModelSerializer):
-    wheels = WheelDetailsSerializer(many=True, read_only=True)
+    # wheels = WheelDetailsSerializer(many=True, read_only=True)
     class Meta:
         model = Category
         fields = '__all__'
@@ -58,16 +58,10 @@ class WheelSerializer(serializers.ModelSerializer):
     details = DetailSerializer(many=True, read_only=True)
 
     # def get_details(self, wheel):
-    #     filtered_details = wheel.details.filter(wheel_id=wheel.id)
-    #     return DetailSerializer(filtered_details, many=True).data
-        
-    def get_details(self, wheel):
-        wheel_id = self.context.get('wheel_id')
-        if wheel_id:
-            filtered_details = wheel.details.filter(wheel_id=wheel_id)
-        else:
-            filtered_details = wheel.details.all() 
-        return DetailSerializer(filtered_details, many=True).data
+    #     details = wheel.details.all()
+    #     print(f"Wheel ID: {wheel.id}, Details Count: {details.count()}, Details: {details}")
+    #     return DetailSerializer(details, many=True).data
+
 
     class Meta:
         model = Wheel
@@ -140,3 +134,6 @@ class UserSerializer(serializers.ModelSerializer):
             profile.save()
 
         return user
+    
+
+

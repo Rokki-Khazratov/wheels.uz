@@ -58,7 +58,7 @@ class Wheel(m.Model):
     name = m.CharField(max_length=255)
     climate = m.IntegerField(choices=CLIMATE_CHOICES)
     category = m.ForeignKey(Category, on_delete=m.CASCADE,related_name='wheels')
-    details = m.ManyToManyField('Detail', related_name='wheels')  # Optional
+    details = m.ManyToManyField('Detail', related_name='wheels')
     images = m.ManyToManyField('WheelImages', related_name='wheel_images', blank=True)
 
     def __str__(self):
@@ -89,3 +89,4 @@ class Order(m.Model):
     longitude = m.CharField(max_length=100)
     latitude = m.CharField(max_length=100)
     adress = m.CharField(max_length=100)
+    wheels = m.ManyToManyField(Wheel)
