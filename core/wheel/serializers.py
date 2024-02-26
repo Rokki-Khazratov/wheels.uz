@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Detail, Category, UserProfile, Wheel, WheelImages
 from django.contrib.auth.models import User
-
+from core.settings import BASE_URL
 
 
 
@@ -56,7 +56,18 @@ class WheelSerializer(serializers.ModelSerializer):
     climate = serializers.CharField(source='get_climate_display')
     category = CategorySerializer(read_only=True)
     details = DetailSerializer(many=True, read_only=True)
+    images = serializers.SerializerMethodField()
 
+    def get_images(self, obj):
+        images = WheelImages.objects.filter(wheel=obj)
+        serialized_images = WheelImagesSerializer(images, many=True).data
+
+        # Prefix each image URL with BASE_URL
+        for image_data in serialized_images:
+            image_data['image'] = BASE_URL + image_data['image']
+
+        return serialized_images
+    
     # def get_details(self, wheel):
     #     details = wheel.details.all()
     #     print(f"Wheel ID: {wheel.id}, Details Count: {details.count()}, Details: {details}")
@@ -65,7 +76,7 @@ class WheelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Wheel
-        fields = ['id', 'name', 'climate', 'category', 'details']
+        fields = ['id', 'name','description', 'climate', 'category', 'details','images']
 
 
 

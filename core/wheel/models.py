@@ -56,6 +56,7 @@ class Category(m.Model):
 
 class Wheel(m.Model):
     name = m.CharField(max_length=255)
+    description = m.TextField(blank=True)
     climate = m.IntegerField(choices=CLIMATE_CHOICES)
     category = m.ForeignKey(Category, on_delete=m.CASCADE,related_name='wheels')
     details = m.ManyToManyField('Detail', related_name='wheels')

@@ -42,5 +42,5 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = CategorySerializer
 
 class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Category.objects.all()
+    queryset = Category.objects.prefetch_related('wheels__images')
     serializer_class = CategorySerializer
