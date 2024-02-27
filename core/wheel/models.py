@@ -86,7 +86,7 @@ class UserProfile(m.Model):
 
 class Order(m.Model):
     full_name = m.CharField(max_length=100)
-    phone_number = m.IntegerField()
+    phone_number = m.CharField(max_length=20)
     passport_number = m.CharField(max_length=100)
 
     longitude = m.CharField(max_length=100)
@@ -96,3 +96,6 @@ class Order(m.Model):
     is_checked = m.BooleanField(default=False)
 
     details = m.ManyToManyField(Detail, related_name='orders', blank=True)
+
+    def __str__(self):
+        return f" {self.full_name} :  {self.phone_number}"

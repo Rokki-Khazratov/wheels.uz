@@ -13,7 +13,7 @@ class DetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Detail
-        fields = ['id', 'wheel_id', 'size','width','lenght', 'month_3_price', 'month_6_price', 'wheel'] 
+        fields = ['id','wheel', 'size','width','lenght', 'month_3_price', 'month_6_price'] 
 
 
 
@@ -22,10 +22,6 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
     
-
-
-
-
 
 class WheelImagesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,24 +48,9 @@ class WheelSerializer(serializers.ModelSerializer):
         model = Wheel
         fields = ['id', 'name','description', 'climate', 'category', 'details','images']
 
-
-
-    # def create(self, validated_data):
-    #     sizes_data = validated_data.pop('size', [])
-    #     images_data = validated_data.pop('images', [])
-        
-    #     wheel = Wheel.objects.create(**validated_data)
-
-    #     for size_data in sizes_data:
-    #         size, created = Size.objects.get_or_create(value=size_data['value'])
-    #         wheel.size.add(size)
-
-    #     for image_data in images_data:
-    #         WheelImages.objects.create(wheel=wheel, **image_data)
-
-    #     return wheel
-
 class OrderSerializer(serializers.ModelSerializer):
+    details = DetailSerializer(many=True, read_only=True)
+    wheels = WheelSerializer(many=True, read_only=True) 
     class Meta:
         model = Order
         fields = '__all__'

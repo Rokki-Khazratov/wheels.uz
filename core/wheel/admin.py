@@ -18,3 +18,10 @@ class WheelAdmin(admin.ModelAdmin):
 
     class Meta:
         model = Wheel
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['full_name','id','is_checked','adress']
+
+    class Meta:
+        model = Order
