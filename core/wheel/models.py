@@ -87,7 +87,12 @@ class UserProfile(m.Model):
 class Order(m.Model):
     full_name = m.CharField(max_length=100)
     phone_number = m.IntegerField()
+    passport_number = m.CharField(max_length=100)
+
     longitude = m.CharField(max_length=100)
     latitude = m.CharField(max_length=100)
     adress = m.CharField(max_length=100)
-    wheels = m.ManyToManyField(Wheel)
+
+    is_checked = m.BooleanField(default=False)
+
+    details = m.ManyToManyField(Detail, related_name='orders', blank=True)
