@@ -49,8 +49,9 @@ class WheelSerializer(serializers.ModelSerializer):
         fields = ['id', 'name','description', 'climate', 'category', 'details','images']
 
 class OrderSerializer(serializers.ModelSerializer):
-    details = DetailSerializer(many=True, read_only=True)
-    wheels = WheelSerializer(many=True, read_only=True) 
+    details = serializers.PrimaryKeyRelatedField(
+        queryset=Detail.objects.all(), many=True)
+
     class Meta:
         model = Order
         fields = '__all__'

@@ -87,7 +87,7 @@ class UserProfile(m.Model):
 class Order(m.Model):
     full_name = m.CharField(max_length=100)
     phone_number = m.CharField(max_length=20)
-    passport_number = m.CharField(max_length=100)
+    passport_image = m.FileField(upload_to="passport_images/", blank=True, null=True)
 
     longitude = m.CharField(max_length=100)
     latitude = m.CharField(max_length=100)
@@ -96,6 +96,7 @@ class Order(m.Model):
     is_checked = m.BooleanField(default=False)
 
     details = m.ManyToManyField(Detail, related_name='orders', blank=True)
+    quantity = m.PositiveSmallIntegerField()
 
     def __str__(self):
         return f" {self.full_name} :  {self.phone_number}"

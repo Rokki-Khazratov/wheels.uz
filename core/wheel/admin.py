@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(Detail)
+# admin.site.register(Detail)
 admin.site.register(Category)
 # admin.site.register(UserProfile)
 # admin.site.register(Wheel)
@@ -25,3 +25,10 @@ class OrderAdmin(admin.ModelAdmin):
 
     class Meta:
         model = Order
+
+@admin.register(Detail)
+class DetailAdmin(admin.ModelAdmin):
+    list_display = ['size','id','width','lenght']
+
+    class Meta:
+        model = Detail
