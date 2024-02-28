@@ -24,8 +24,8 @@ class Detail(m.Model):
     wheel = m.ForeignKey('Wheel', on_delete=m.CASCADE) 
     wheel_reference_id = m.IntegerField(null=True, blank=True)
     size = m.IntegerField(choices=SIZE_CHOICES)
-    width = m.IntegerField(default=65)
-    lenght = m.IntegerField(default=170)
+    width = m.IntegerField()
+    lenght = m.IntegerField()
     price = m.IntegerField()
 
     @property
@@ -59,7 +59,7 @@ class Wheel(m.Model):
     description = m.TextField(blank=True)
     climate = m.IntegerField(choices=CLIMATE_CHOICES)
     category = m.ForeignKey(Category, on_delete=m.CASCADE,related_name='wheels')
-    details = m.ManyToManyField('Detail', related_name='wheels')
+    details = m.ManyToManyField('Detail', related_name='wheels',blank=True)
     images = m.ManyToManyField('WheelImages', related_name='wheel_images', blank=True)
 
     def __str__(self):

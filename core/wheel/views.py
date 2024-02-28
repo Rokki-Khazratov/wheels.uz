@@ -2,7 +2,7 @@
 from django.db.models import Q
 from rest_framework import generics
 from .models import Detail, Category, Order, Wheel, WheelImages
-from .serializers import DetailSerializer, CategorySerializer, OrderSerializer, WheelSerializer, WheelImagesSerializer
+from .serializers import DetailSerializer, CategorySerializer, OrderPostSerializer, OrderSerializer, WheelSerializer, WheelImagesSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -114,20 +114,21 @@ class OrderRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 
-class DetailCreateAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = DetailSerializer(data=request.data)
-        if serializer.is_valid():
-            detail = serializer.save()
-            return Response(DetailSerializer(detail).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class DetailCreateAPIView(APIView):
+#     def post(self, request, *args, **kwargs):
+#         serializer = DetailSerializer(data=request.data)
+#         if serializer.is_valid():
+#             detail = serializer.save()
+#             return Response(DetailSerializer(detail).data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class OrderCreateAPIView(APIView):
     def post(self, request, *args, **kwargs):
         detail_ids = request.data.get('details', [])
         details = Detail.objects.filter(id__in=detail_ids)
 
-        order_serializer = OrderSerializer(data=request.data)
+        order_serializer = OrderPostSerializer(data=request.data)
         if order_serializer.is_valid():
             order_serializer.save(details=details)
             return Response(order_serializer.data, status=status.HTTP_201_CREATED)
