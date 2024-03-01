@@ -82,12 +82,14 @@ class UserProfile(m.Model):
     def __str__(self):
         return str(self.user) 
 
-
+def order_image_path(instance, filename):
+    order = instance.order
+    return f'orders/passports/{order.id}/{filename}'
 
 class Order(m.Model):
     full_name = m.CharField(max_length=100)
     phone_number = m.CharField(max_length=20)
-    passport_image = m.FileField(upload_to="passport_images/", blank=True, null=True)
+    passport_image = m.FileField(upload_to=order_image_path, blank=True, null=True)
 
     longitude = m.CharField(max_length=100)
     latitude = m.CharField(max_length=100)
