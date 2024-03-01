@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 
 
 
+def order_image_path(instance, filename):
+    return f'orders/passports/{instance.id}/image.jpg'
+
 SIZE_CHOICES = [
     (13, '13'),
     (14, '14'),
@@ -81,10 +84,6 @@ class UserProfile(m.Model):
 
     def __str__(self):
         return str(self.user) 
-
-def order_image_path(instance, filename):
-    order = instance.order
-    return f'orders/passports/{order.id}/{filename}'
 
 class Order(m.Model):
     full_name = m.CharField(max_length=100)
