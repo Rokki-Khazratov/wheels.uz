@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Detail, Category, Order, UserProfile, Wheel, WheelImages
 from django.contrib.auth.models import User
 from core.settings import BASE_URL
-
+from urllib.parse import quote
 
 
 
@@ -62,6 +62,14 @@ class OrderPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+    
+        if representation['passport_image']:
+            representation['passport_image'] = quote(representation['passport_image'])
+
+        return representation
 
 
 

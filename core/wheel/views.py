@@ -6,6 +6,9 @@ from .serializers import DetailSerializer, CategorySerializer, OrderPostSerializ
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+# from django.contrib.auth.decorators import login_required
+# from rest_framework.decorators import authentication_classes, permission_classes
+# from rest_framework.permissions import IsAuthenticated
 
 class DetailListCreateAPIView(generics.ListCreateAPIView):
     queryset = Detail.objects.all()
@@ -83,6 +86,10 @@ class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
 
 
+
+
+# @login_required
+# @permission_classes([IsAuthenticated])
 class OrderListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = OrderSerializer
 

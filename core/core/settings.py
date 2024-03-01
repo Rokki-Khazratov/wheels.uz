@@ -8,8 +8,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-1*8x1#kh5-8!8p)b3+zfnk6ch-gs@ndlb*!1+ls&0m#1at92o)'
 
-# BASE_URL = 'http://127.0.0.1:8000/'
-BASE_URL = 'https://wheels.uz/'
+BASE_URL = 'http://127.0.0.1:8000/'
+# BASE_URL = 'https://linkbuy.uz/'
 
 
 DEBUG = True
@@ -29,10 +29,13 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'wheel',
+    'whitenoise.runserver_nostatic',  # Add this line
+
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this line
     'corsheaders.middleware.CorsMiddleware',  # Add this line
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -92,7 +95,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "https://wheels.uz",
+]
+
 CORS_ALLOW_METHODS = [
     'GET',
     'POST',
@@ -101,6 +109,7 @@ CORS_ALLOW_METHODS = [
     'DELETE',
     'OPTIONS',
 ]
+
 CORS_ALLOW_HEADERS = [
     'Accept',
     'Accept-Encoding',
@@ -130,7 +139,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'storage')
 STATIC_URL = '/staticfiles/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
