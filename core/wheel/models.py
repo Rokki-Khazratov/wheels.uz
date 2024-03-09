@@ -27,9 +27,9 @@ class Detail(m.Model):
     wheel = m.ForeignKey('Wheel', on_delete=m.CASCADE) 
     wheel_reference_id = m.IntegerField(null=True, blank=True)
     size = m.IntegerField(choices=SIZE_CHOICES)
-    width = m.IntegerField()
-    lenght = m.IntegerField()
-    price = m.IntegerField()
+    width = m.IntegerField(blank=True)
+    length = m.IntegerField(blank=True)
+    price = m.IntegerField(blank=True)
 
     @property
     def month_3_price(self):
@@ -60,8 +60,8 @@ class Category(m.Model):
 class Wheel(m.Model):
     name = m.CharField(max_length=255)
     description = m.TextField(blank=True)
-    climate = m.IntegerField(choices=CLIMATE_CHOICES)
-    category = m.ForeignKey(Category, on_delete=m.CASCADE,related_name='wheels')
+    climate = m.IntegerField(choices=CLIMATE_CHOICES,blank=True,null=True)
+    category = m.ForeignKey(Category, on_delete=m.CASCADE,related_name='wheels',blank=True,null=True)
     details = m.ManyToManyField('Detail', related_name='wheels',blank=True)
     images = m.ManyToManyField('WheelImages', related_name='wheel_images', blank=True)
 

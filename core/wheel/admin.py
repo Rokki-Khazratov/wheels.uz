@@ -28,7 +28,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Detail)
 class DetailAdmin(admin.ModelAdmin):
-    list_display = ['size','id','width','lenght']
+    list_display = ['size','id','width','length']
 
     class Meta:
         model = Detail

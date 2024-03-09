@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from .models import Detail, Category, Order, UserProfile, Wheel, WheelImages
 from django.contrib.auth.models import User
 from core.settings import BASE_URL
 from urllib.parse import quote
-
+from .models import Detail, Category, Order, UserProfile, Wheel, WheelImages
 
 
 
@@ -13,7 +12,7 @@ class DetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Detail
-        fields = ['id','wheel', 'size','width','lenght', 'month_3_price', 'month_6_price'] 
+        fields = ['id','wheel', 'size','width','length', 'month_3_price', 'month_6_price'] 
 
 
 

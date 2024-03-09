@@ -1,14 +1,32 @@
 # views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+# from rest_framework.decorators import authentication_classes, permission_classes
+# from rest_framework.permissions import IsAuthenticated
+
 from django.db.models import Q
 from rest_framework import generics
 from .models import Detail, Category, Order, Wheel, WheelImages
 from .serializers import DetailSerializer, CategorySerializer, OrderPostSerializer, OrderSerializer, WheelSerializer, WheelImagesSerializer
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+
 # from django.contrib.auth.decorators import login_required
-# from rest_framework.decorators import authentication_classes, permission_classes
-# from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
+
+class CustomPageNumberPagination(PageNumberPagination):
+    page_size = 1  
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+
+
+
+
+
+
+
 
 class DetailListCreateAPIView(generics.ListCreateAPIView):
     queryset = Detail.objects.all()
@@ -35,6 +53,7 @@ class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
 class WheelListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = WheelSerializer
+    pagination_class = CustomPageNumberPagination  
 
     def get_queryset(self):
         queryset = Wheel.objects.all().prefetch_related('details')
@@ -60,7 +79,7 @@ class WheelListCreateAPIView(generics.ListCreateAPIView):
             queryset = queryset.filter(details__width=details_width)
 
         if details_length:
-            queryset = queryset.filter(details__lenght=details_length)
+            queryset = queryset.filter(details__length=details_length)
 
         if details_price_min:
             queryset = queryset.filter(details__price__gte=details_price_min)
@@ -69,6 +88,17 @@ class WheelListCreateAPIView(generics.ListCreateAPIView):
             queryset = queryset.filter(details__price__lte=details_price_max)
 
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class WheelRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
