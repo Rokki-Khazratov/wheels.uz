@@ -1,11 +1,7 @@
 from django.contrib import admin
 from .models import *
 
-# admin.site.register(Detail)
-admin.site.register(Category)
-# admin.site.register(UserProfile)
-# admin.site.register(Wheel)
-# admin.site.register(WheelImages)
+
 
 class WheelImageAdmin (admin.StackedInline):
     model = WheelImages
@@ -25,6 +21,13 @@ class OrderAdmin(admin.ModelAdmin):
 
     class Meta:
         model = Order
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name','id']
+
+    class Meta:
+        model = Category
 
 @admin.register(Detail)
 class DetailAdmin(admin.ModelAdmin):

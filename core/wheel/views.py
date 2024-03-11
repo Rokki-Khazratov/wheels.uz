@@ -3,23 +3,31 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.decorators import api_view
+from rest_framework import generics
 # from rest_framework.decorators import authentication_classes, permission_classes
 # from rest_framework.permissions import IsAuthenticated
 
+
 from django.db.models import Q
-from rest_framework import generics
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
 from .models import Detail, Category, Order, Wheel, WheelImages
-from .serializers import DetailSerializer, CategorySerializer, OrderPostSerializer, OrderSerializer, WheelSerializer, WheelImagesSerializer
+from .serializers import DetailSerializer, CategorySerializer, OrderPostSerializer, OrderSerializer, PostDetailSerializer, WheelDetailSerializer, WheelSerializer, WheelImagesSerializer
 
 # from django.contrib.auth.decorators import login_required
 from rest_framework.pagination import PageNumberPagination
 
 class CustomPageNumberPagination(PageNumberPagination):
-    page_size = 1  
+    page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
 
 
+
+def get_csrf_token(request):
+    csrf_token = get_token(request)
+    return JsonResponse({'csrf_token': csrf_token})
 
 
 
@@ -103,7 +111,7 @@ class WheelListCreateAPIView(generics.ListCreateAPIView):
 
 class WheelRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Wheel.objects.all().prefetch_related('details')
-    serializer_class = WheelSerializer
+    serializer_class = WheelDetailSerializer
 
 
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
@@ -170,3 +178,43 @@ class OrderCreateAPIView(APIView):
             order_serializer.save(details=details)
             return Response(order_serializer.data, status=status.HTTP_201_CREATED)
         return Response(order_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['POST'])
+def bulk_create_wheels(request):
+    wheels_data_list = request.data
+
+    for serialized_data in wheels_data_list:
+        details_data = serialized_data.pop('details', [])
+        images_data = serialized_data.pop('images', [])
+
+        wheel_serializer = WheelSerializer(data=serialized_data)
+
+        if wheel_serializer.is_valid():
+            wheel = wheel_serializer.save()
+
+            # Associate details with the created wheel
+            for detail_data in details_data:
+                detail_data['wheel'] = wheel.id  # Associate the detail with the current wheel
+                detail_serializer = DetailSerializer(data=detail_data)
+                
+                if detail_serializer.is_valid():
+                    detail_serializer.save()
+                else:
+                    return Response(detail_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # Associate images with the created wheel
+            for image_data in images_data:
+                image_data['wheel'] = wheel.id  # Associate the image with the current wheel
+                image_serializer = WheelImagesSerializer(data=image_data)
+
+                if image_serializer.is_valid():
+                    image_serializer.save()
+                else:
+                    return Response(image_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response(wheel_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response("Данные успешно созданы", status=status.HTTP_201_CREATED)

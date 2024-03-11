@@ -1,16 +1,9 @@
 from django.urls import path
-from .views import (
-    DetailListCreateAPIView, DetailRetrieveUpdateDestroyAPIView,
-    CategoryListCreateAPIView, CategoryRetrieveUpdateDestroyAPIView, OrderCreateAPIView, OrderListCreateAPIView, OrderRetrieveUpdateDestroyAPIView,
-    WheelListCreateAPIView, WheelRetrieveUpdateDestroyAPIView,
-)
-from .views import OrderListCreateAPIView
+from .views import *
 
 urlpatterns = [
-
-    path('categories/', CategoryListCreateAPIView.as_view()),
-    path('categories/<int:pk>/', CategoryRetrieveUpdateDestroyAPIView.as_view()),
-
+    path('api/get_csrf_token/', get_csrf_token, name='get_csrf_token'),
+    path('wheels/create/', bulk_create_wheels, name='create_wheels'),
 
     path('details/', DetailListCreateAPIView.as_view(), name='Detail-list-create'),
     path('details/<int:pk>/', DetailRetrieveUpdateDestroyAPIView.as_view(), name='Detail-retrieve-update-destroy'),
@@ -26,6 +19,3 @@ urlpatterns = [
     path('orders/<int:pk>/', OrderRetrieveUpdateDestroyAPIView.as_view(), name='order-retrieve-update-destroy'),
     path('create_order/', OrderCreateAPIView.as_view(), name='create_order'),
 ]
-    # path('create_detail/', DetailCreateAPIView.as_view(), name='create_detail'),
-
-
