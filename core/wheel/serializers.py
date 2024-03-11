@@ -17,23 +17,34 @@ class ShortDetailSerializer(serializers.ModelSerializer):
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
-    wheel_id = serializers.PrimaryKeyRelatedField(queryset=Wheel.objects.all(), write_only=True)
+    wheel_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Detail
         fields = ['id', 'wheel_id', 'size', 'width', 'length', 'price', 'month_3_price', 'month_6_price', 'month_9_price']
-        read_only_fields = ['wheel']  # Make the wheel field read-only
+        read_only_fields = ['wheel']  
 
     def create(self, validated_data):
         wheel_id = validated_data.pop('wheel_id', None)
 
-        if not wheel_id:
+        if wheel_id is None:
             raise serializers.ValidationError("'wheel_id' must be provided.")
+    
+        try:
+            wheel = Wheel.objects.get(id=wheel_id)
+        except Wheel.DoesNotExist:
+            raise serializers.ValidationError("Invalid 'wheel_id' provided.")
 
-        wheel = wheel_id  # You might need to adjust this based on your model structure
         validated_data['wheel'] = wheel
-        print(f"Creating Detail with data: {validated_data}")  # Add this line for debugging
-        return super().create(validated_data)
+        print(f"Creating Detail with data: {validated_data}")
+
+        # Create the detail and associate it with the wheel
+        detail = super().create(validated_data)
+        wheel.details.add(detail)  
+
+        return detail
+
+
 
 
 

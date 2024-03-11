@@ -196,8 +196,8 @@ def bulk_create_wheels(request):
 
             # Associate details with the created wheel
             for detail_data in details_data:
-                detail_data['wheel'] = wheel.id  # Associate the detail with the current wheel
-                detail_serializer = DetailSerializer(data=detail_data)
+                detail_data['wheel_id'] = wheel.id  # Associate the detail with the current wheel
+                detail_serializer = PostDetailSerializer(data=detail_data)
                 
                 if detail_serializer.is_valid():
                     detail_serializer.save()
