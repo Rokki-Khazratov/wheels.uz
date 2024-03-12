@@ -7,13 +7,30 @@ from .models import Detail, Category, Order, UserProfile, Wheel, WheelImages
 
 
 
-class ShortDetailSerializer(serializers.ModelSerializer):
+
+class PostWheelSerializer(serializers.ModelSerializer):
+    image = serializers.URLField(allow_null=True, allow_blank=True)
+
     class Meta:
-        model = Detail
-        fields = ['size','width','length','month_3_price', 'month_6_price','month_9_price'] 
+        model = Wheel
+        fields = ['id', 'name', 'company', 'description', 'climate', 'category', 'details', 'image']
+
+    def create(self, validated_data):
+        return Wheel.objects.create(**validated_data)
 
 
+class PostWheelImagesSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
 
+    class Meta:
+        model = WheelImages
+        fields = ['image', 'wheel']
+
+    def create(self, validated_data):
+        image = validated_data.pop('image')
+        wheel = validated_data.pop('wheel')
+        instance = WheelImages.objects.create(image=image, wheel=wheel)
+        return instance
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
@@ -29,14 +46,13 @@ class PostDetailSerializer(serializers.ModelSerializer):
 
         if wheel_id is None:
             raise serializers.ValidationError("'wheel_id' must be provided.")
-    
+
         try:
             wheel = Wheel.objects.get(id=wheel_id)
         except Wheel.DoesNotExist:
             raise serializers.ValidationError("Invalid 'wheel_id' provided.")
 
         validated_data['wheel'] = wheel
-        print(f"Creating Detail with data: {validated_data}")
 
         # Create the detail and associate it with the wheel
         detail = super().create(validated_data)
@@ -48,7 +64,34 @@ class PostDetailSerializer(serializers.ModelSerializer):
 
 
 
+class OrderPostSerializer(serializers.ModelSerializer):
+    details = serializers.PrimaryKeyRelatedField(
+        queryset=Detail.objects.all(), many=True)
 
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+    
+        if representation['passport_image']:
+            representation['passport_image'] = quote(representation['passport_image'])
+
+        return representation
+    
+
+
+
+
+
+
+
+
+class ShortDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Detail
+        fields = ['size','width','length','month_3_price', 'month_6_price','month_9_price'] 
 
 class DetailSerializer(serializers.ModelSerializer):
     wheel = serializers.CharField(source='wheel.name', read_only=True)
@@ -56,8 +99,6 @@ class DetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Detail
         fields = ['id','wheel', 'size','width','length', 'price', 'month_3_price', 'month_6_price','month_9_price']
-
-
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -74,9 +115,9 @@ class WheelImagesSerializer(serializers.ModelSerializer):
         
 class WheelSerializer(serializers.ModelSerializer):
     details = ShortDetailSerializer(many=True, read_only=True)
-    image = serializers.SerializerMethodField()
+    one_image = serializers.SerializerMethodField()
 
-    def get_image(self, obj):
+    def get_one_image(self, obj):
         first_image = WheelImages.objects.filter(wheel=obj).first()
         if first_image:
             return BASE_URL + first_image.image.url
@@ -84,7 +125,7 @@ class WheelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Wheel
-        fields = ['id', 'name', 'company', 'category', 'details', 'image']
+        fields = ['id', 'name', 'company', 'category', 'details', 'image','one_image']
         
 
 
@@ -106,7 +147,7 @@ class WheelDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Wheel
-        fields = ['id', 'name','description','company', 'climate', 'category', 'details','images']
+        fields = ['id', 'name','description','company', 'image','climate', 'category', 'details','images']
 
 class OrderSerializer(serializers.ModelSerializer):
     details = DetailSerializer(many=True)
@@ -115,21 +156,6 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = '__all__'
 
-class OrderPostSerializer(serializers.ModelSerializer):
-    details = serializers.PrimaryKeyRelatedField(
-        queryset=Detail.objects.all(), many=True)
-
-    class Meta:
-        model = Order
-        fields = '__all__'
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-    
-        if representation['passport_image']:
-            representation['passport_image'] = quote(representation['passport_image'])
-
-        return representation
 
 
 

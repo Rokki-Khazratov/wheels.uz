@@ -1,10 +1,13 @@
 # views.py
+import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view
 from rest_framework import generics
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 # from rest_framework.decorators import authentication_classes, permission_classes
 # from rest_framework.permissions import IsAuthenticated
 
@@ -13,7 +16,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from .models import Detail, Category, Order, Wheel, WheelImages
-from .serializers import DetailSerializer, CategorySerializer, OrderPostSerializer, OrderSerializer, PostDetailSerializer, WheelDetailSerializer, WheelSerializer, WheelImagesSerializer
+from .serializers import DetailSerializer, CategorySerializer, OrderPostSerializer, OrderSerializer, PostDetailSerializer, PostWheelImagesSerializer, WheelDetailSerializer, WheelSerializer, WheelImagesSerializer
 
 # from django.contrib.auth.decorators import login_required
 from rest_framework.pagination import PageNumberPagination
@@ -181,40 +184,56 @@ class OrderCreateAPIView(APIView):
 
 
 
+
+
+
 @api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
 def bulk_create_wheels(request):
-    wheels_data_list = request.data
+    print(request.FILES)
+    print(request.data)
 
-    for serialized_data in wheels_data_list:
-        details_data = serialized_data.pop('details', [])
-        images_data = serialized_data.pop('images', [])
+    wheels_data_list = json.loads(request.data.get('json'))
 
-        wheel_serializer = WheelSerializer(data=serialized_data)
+    if wheels_data_list is not None:
+        if isinstance(wheels_data_list, list) and len(wheels_data_list) > 0:
+            for serialized_data in wheels_data_list:
+                if isinstance(serialized_data, dict):
+                    details_data = serialized_data.pop('details', [])
+                    # images_data = serialized_data.pop('images', [])
 
-        if wheel_serializer.is_valid():
-            wheel = wheel_serializer.save()
+                    wheel_serializer = WheelSerializer(data=serialized_data)
 
-            # Associate details with the created wheel
-            for detail_data in details_data:
-                detail_data['wheel_id'] = wheel.id  # Associate the detail with the current wheel
-                detail_serializer = PostDetailSerializer(data=detail_data)
-                
-                if detail_serializer.is_valid():
-                    detail_serializer.save()
-                else:
-                    return Response(detail_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    if wheel_serializer.is_valid():
+                        wheel = wheel_serializer.save()
 
-            # Associate images with the created wheel
-            for image_data in images_data:
-                image_data['wheel'] = wheel.id  # Associate the image with the current wheel
-                image_serializer = WheelImagesSerializer(data=image_data)
+                        for detail_data in details_data:
+                            detail_data['wheel_id'] = wheel.id
+                            detail_serializer = PostDetailSerializer(data=detail_data)
 
-                if image_serializer.is_valid():
-                    image_serializer.save()
-                else:
-                    return Response(image_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                            if detail_serializer.is_valid():
+                                detail_serializer.save()
+                            else:
+                                return Response(detail_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+                        # for image_data in images_data:
+                        #     image_data['wheel_id'] = wheel.id  # Используйте сам объект wheel
+                        #     image_serializer = PostWheelImagesSerializer(data=image_data)
+
+                        #     if image_serializer.is_valid():
+                        #         image_serializer.save()
+                        #     else:
+                        #         return Response(image_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        return Response(wheel_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response("Данные успешно созданы", status=status.HTTP_201_CREATED)
         else:
-            return Response(wheel_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response("Invalid or empty list in 'json' key in the request data", status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response("Invalid or missing 'json' key in the request data", status=status.HTTP_400_BAD_REQUEST)
+    
 
-    return Response("Данные успешно созданы", status=status.HTTP_201_CREATED)
+
+
+

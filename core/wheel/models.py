@@ -68,6 +68,7 @@ class Wheel(m.Model):
     category = m.ForeignKey(Category, on_delete=m.CASCADE,related_name='wheels',blank=True,null=True)
     details = m.ManyToManyField('Detail', related_name='wheels',blank=True)
     images = m.ManyToManyField('WheelImages', related_name='wheel_images', blank=True)
+    image = m.URLField(blank=True, null=True)
 
     def __str__(self):
         return f"Автомобиль-{self.name} "
