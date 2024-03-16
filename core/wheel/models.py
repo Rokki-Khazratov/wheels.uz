@@ -53,9 +53,16 @@ class Detail(m.Model):
 
     
 
+class CategorySizes(m.Model) :
+    name = m.IntegerField()
+
+    def __str__(self):
+        return f"{self.name}"
+    
 class Category(m.Model):
     name = m.CharField(max_length=255)
     image = m.ImageField(upload_to="categories/")
+    sizes = m.ManyToManyField(CategorySizes,blank=True,null=True)
 
     def __str__(self):
         return f"Автомобиль {self.name}"

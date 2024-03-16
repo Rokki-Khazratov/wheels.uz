@@ -101,10 +101,18 @@ class DetailSerializer(serializers.ModelSerializer):
         fields = ['id','wheel', 'size','width','length', 'price', 'month_3_price', 'month_6_price','month_9_price']
 
 
+
+
 class CategorySerializer(serializers.ModelSerializer):
+    sizes = serializers.SerializerMethodField()
+
+    def get_sizes(self, obj):
+        return [size.name for size in obj.sizes.all()]
+
     class Meta:
         model = Category
         fields = '__all__'
+
     
 
 class WheelImagesSerializer(serializers.ModelSerializer):
