@@ -62,7 +62,7 @@ class CategorySizes(m.Model) :
 class Category(m.Model):
     name = m.CharField(max_length=255)
     image = m.ImageField(upload_to="categories/")
-    sizes = m.ManyToManyField(CategorySizes,blank=True,null=True)
+    sizes = m.ManyToManyField(CategorySizes,blank=True)
 
     def __str__(self):
         return f"Автомобиль {self.name}"
