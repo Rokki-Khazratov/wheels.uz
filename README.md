@@ -11,3 +11,10 @@ wheels.uz is a platform designed to help users explore and manage various types 
 - **API Access**: Developers can leverage our RESTful API to integrate wheel data into their applications seamlessly.
 
 Feel free to browse through our collection, place your orders, and enjoy the convenience of finding the perfect wheels for your ride!
+
+
+# Telegram-BOT
+
+I also code teelgram bot for fastest notifications about new orders
+
+- [Bot repository](https://github.com/Rokki-Khazratov/wheels-orders)
