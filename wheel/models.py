@@ -106,6 +106,7 @@ class Order(m.Model):
     latitude = m.CharField(max_length=100)
     adress = m.CharField(max_length=100)
 
+    bot_sended = m.BooleanField(default=False)
     is_checked = m.BooleanField(default=False)
 
     details = m.ManyToManyField(Detail, related_name='orders', blank=True)

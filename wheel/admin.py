@@ -18,7 +18,7 @@ class WheelAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['full_name','id','is_checked','adress']
+    list_display = ['full_name','id','bot_sended','is_checked','adress']
 
     class Meta:
         model = Order
