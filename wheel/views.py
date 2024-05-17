@@ -39,6 +39,7 @@ def get_csrf_token(request):
 
 
 
+
 class DetailListCreateAPIView(generics.ListCreateAPIView):
     queryset = Detail.objects.all()
     serializer_class = DetailSerializer
@@ -140,7 +141,7 @@ class OrderListCreateAPIView(generics.ListCreateAPIView):
         category_id = self.request.query_params.get('category_id', None)
         category_name = self.request.query_params.get('category_name', None)
         is_checked = self.request.query_params.get('is_checked', None)
-        bot_sended = self.request.query_params.get('bot_sended', None)
+        # bot_sended = self.request.query_params.get('bot_sended', None)
 
         if category_id:
             queryset = queryset.filter(details__wheel__category_id=category_id)
@@ -151,8 +152,8 @@ class OrderListCreateAPIView(generics.ListCreateAPIView):
         if is_checked is not None:
             queryset = queryset.filter(is_checked=is_checked.lower() == 'true')
 
-        if bot_sended is not None:
-            queryset = queryset.filter(bot_sended=bot_sended.lower() == 'true')
+        # if bot_sended is not None:
+        #     queryset = queryset.filter(bot_sended=bot_sended.lower() == 'true')
 
         return queryset
 

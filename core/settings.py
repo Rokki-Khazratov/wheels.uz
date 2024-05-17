@@ -1,21 +1,20 @@
+# settings.py
 import os
 from pathlib import Path
-
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-SECRET_KEY = 'django-insecure-1*8x1#kh5-8!8p)b3+zfnk6ch-gs@ndlb*!1+ls&0m#1at92o)'
+# Load the secret key from the environment variables
+SECRET_KEY = config('DJANGO_SECRET_KEY', default='django-insecure-1*8x1#kh5-8!8p)b3+zfnk6ch-gs@ndlb*!1+ls&0m#1at92o)')
 
 BASE_URL = 'http://127.0.0.1:8000/'
 # BASE_URL = 'https://linkbuy.uz/'
 
-
-DEBUG = True
+DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -30,7 +29,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'wheel',
     'whitenoise.runserver_nostatic',  # Add this line
-
+    'corsheaders',  # Add this line
 ]
 
 MIDDLEWARE = [
@@ -65,17 +64,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': config('POSTGRES_HOST'),
+        'PORT': config('POSTGRES_PORT', cast=int),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -127,19 +128,15 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 MEDIA_URL = '/storage/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'storage')
 
-
-
 STATIC_URL = '/staticfiles/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
